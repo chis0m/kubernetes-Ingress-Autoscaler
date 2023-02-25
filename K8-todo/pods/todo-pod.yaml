@@ -1,0 +1,41 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: todo-pod
+  labels:
+    app: todo-pod
+spec:
+  volumes:
+    - name: shared-files
+      emptyDir: {}
+    
+    - name: nginx-config-volume
+      configMap:
+        name: nginx-config
+
+  containers:
+    - image: cl0ud/todo
+      name: todo
+      envFrom:
+        - configMapRef:
+            name: env-config               
+      volumeMounts:
+        - name: shared-files
+          mountPath: /var/www/html
+      lifecycle:
+        postStart:
+          exec:
+            command: ["/bin/sh", "-c", "cp -r /app/. /var/www/html"]
+      ports:
+        - containerPort: 9000
+          name: fmp-port              
+    - image: nginx:1.7.9
+      name: nginx
+      volumeMounts:
+        - name: shared-files
+          mountPath: /var/www/html
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      ports:
+        - containerPort: 80              

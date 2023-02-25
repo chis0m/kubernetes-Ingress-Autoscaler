@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config
+data:
+  APP_DEBUG: "false"
+  APP_ENV: local
+  APP_KEY: base64:HDzmGIQAGGIJk5jmpIhkgAcEB9iFovK5b9JitmCpajM=
+  APP_LOG_LEVEL: debug
+  APP_NAME: "php-Todo"
+  APP_URL: https://localhost
+  BROADCAST_DRIVER: log
+  CACHE_DRIVER: file
+  QUEUE_CONNECTION: sync
+  SESSION_DRIVER: file
+  SESSION_LIFETIME: "120"
+  DB_CONNECTION: mysql
+  DB_DATABASE: task
+  DB_HOST: host
+  DB_PASSWORD: password
+  DB_PORT: "3306"
+  DB_USERNAME: username
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo
+  template:
+    metadata:
+      labels:
+        app: todo
+    spec:
+      containers:
+      - name: todo
+        image: cl0ud/laranx
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        envFrom:
+          - configMapRef:
+              name: env-config
+        ports:
+          - containerPort: 8000
+            name: todo-port
+ 
+
+---            
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-service
+spec:
+  selector:
+    app: todo
+  type: NodePort
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30007

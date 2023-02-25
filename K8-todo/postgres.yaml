@@ -1,0 +1,48 @@
+---
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: postgres-deploy
+    labels:
+      name: postgres-deploy
+      app: todo
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: postgres-pod
+        app: todo
+    template:
+      metadata:
+        name: postgres-pod
+        labels:
+          name: postgres-pod
+          app: todo
+      spec:
+        containers:
+        - name: postgres
+          image: postgres
+          ports:
+          - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: trust
+---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: db
+    labels:
+      name: postgres-service
+      app: todo
+  spec:
+    ports:
+    - port: 5432
+      targetPort: 5432
+    selector:
+      name: postgres-pod
+      app: todo  
