@@ -28,7 +28,7 @@ module "eks" {
         role = "general"
       }
 
-      instance_types = ["t2.micro"]
+      instance_types = ["t2.medium"]
       capacity_type  = "ON_DEMAND"
     }
 

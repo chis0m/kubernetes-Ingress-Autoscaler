@@ -11,12 +11,12 @@ module "vpc" {
 
   # tags to be used by aws load balancer controller
   public_subnet_tags = {
-    "kubernetes.io/cluster/${var.infra_name}" = "shared"
-    "kubernetes.io/role/elb" = "1"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                  = "1"
   }
   private_subnet_tags = {
-    "kubernetes.io/cluster/${var.infra_name}" = "shared"
-    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"         = "1"
   }
 
   enable_nat_gateway     = true
@@ -28,6 +28,6 @@ module "vpc" {
 
   tags = {
     "kubernetes.io/cluster/${var.infra_name}" = "shared"
-    Environment = "staging"
+    Environment                               = "staging"
   }
 }
